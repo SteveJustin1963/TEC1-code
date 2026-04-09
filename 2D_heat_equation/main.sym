@@ -1,0 +1,54 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 1.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  002710 L
+    .__.ABS.                                                    =  000000 G
+    .__.CPU.                                                    =  000000 L
+    .__.H$L.                                                    =  000000 L
+    ___fsadd                                                       ****** GX
+    ___fsdiv                                                       ****** GX
+    ___fslt                                                        ****** GX
+    ___fsmul                                                       ****** GX
+    ___sint2fs                                                     ****** GX
+  0 ___str_0                                                       00070A R
+  0 ___str_2                                                       000731 R
+  0 ___str_3                                                       00073A R
+    __modsint                                                      ****** GX
+    __mulint                                                       ****** GX
+  0 _apu_addf                                                      0001CB R
+    _apu_cmd                                                    =  000041 
+    _apu_data                                                   =  000040 
+  0 _apu_divf                                                      0001AC R
+  0 _apu_exec                                                      000172 R
+  0 _apu_expf                                                      000182 R
+  0 _apu_mulf                                                      00018D R
+  0 _apu_pop                                                       0000CC R
+  0 _apu_push                                                      0000BC R
+  0 _apu_sinf                                                      000177 R
+  0 _apu_to_ieee                                                   00005B R
+  0 _apu_wait                                                      0000B6 R
+  0 _get_Bmn                                                       0001EA R
+  0 _ieee_to_apu                                                   000000 R
+  0 _main                                                          0005F9 GR
+    _printf                                                        ****** GX
+    _puts                                                          ****** GX
+  0 _solve_2d_heat                                                 000257 R
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
+Hexadecimal [24-Bits]
+
+Area Table
+
+   0 _CODE                                      size    74A   flags    0
+   1 _DATA                                      size      0   flags    0
+   2 _INITIALIZED                               size      0   flags    0
+   3 _DABS                                      size      0   flags    8
+   4 _HOME                                      size      0   flags    0
+   5 _GSINIT                                    size      0   flags    0
+   6 _GSFINAL                                   size      0   flags    0
+   7 _INITIALIZER                               size      0   flags    0
+   8 _CABS                                      size      0   flags    8
+

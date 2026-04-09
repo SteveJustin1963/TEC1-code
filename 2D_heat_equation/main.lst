@@ -1,0 +1,1411 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.2.0 #13081 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module main
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _main
+                                     12 	.globl _puts
+                                     13 	.globl _printf
+                                     14 ;--------------------------------------------------------
+                                     15 ; special function registers
+                                     16 ;--------------------------------------------------------
+                           000040    17 _apu_data	=	0x0040
+                           000041    18 _apu_cmd	=	0x0041
+                                     19 ;--------------------------------------------------------
+                                     20 ; ram data
+                                     21 ;--------------------------------------------------------
+                                     22 	.area _DATA
+                                     23 ;--------------------------------------------------------
+                                     24 ; ram data
+                                     25 ;--------------------------------------------------------
+                                     26 	.area _INITIALIZED
+                                     27 ;--------------------------------------------------------
+                                     28 ; absolute external ram data
+                                     29 ;--------------------------------------------------------
+                                     30 	.area _DABS (ABS)
+                                     31 ;--------------------------------------------------------
+                                     32 ; global & static initialisations
+                                     33 ;--------------------------------------------------------
+                                     34 	.area _HOME
+                                     35 	.area _GSINIT
+                                     36 	.area _GSFINAL
+                                     37 	.area _GSINIT
+                                     38 ;--------------------------------------------------------
+                                     39 ; Home
+                                     40 ;--------------------------------------------------------
+                                     41 	.area _HOME
+                                     42 	.area _HOME
+                                     43 ;--------------------------------------------------------
+                                     44 ; code
+                                     45 ;--------------------------------------------------------
+                                     46 	.area _CODE
+                                     47 ;main.c:65: static uint32_t ieee_to_apu(float f) {
+                                     48 ;	---------------------------------
+                                     49 ; Function ieee_to_apu
+                                     50 ; ---------------------------------
+      000000                         51 _ieee_to_apu:
+      000000 DD E5            [15]   52 	push	ix
+      000002 DD 21 00 00      [14]   53 	ld	ix,#0
+      000006 DD 39            [15]   54 	add	ix,sp
+      000008 F5               [11]   55 	push	af
+      000009 F5               [11]   56 	push	af
+      00000A 4D               [ 4]   57 	ld	c, l
+      00000B 44               [ 4]   58 	ld	b, h
+                                     59 ;main.c:68: x.f = f;
+      00000C 21 00 00         [10]   60 	ld	hl, #0
+      00000F 39               [11]   61 	add	hl, sp
+      000010 73               [ 7]   62 	ld	(hl), e
+      000011 23               [ 6]   63 	inc	hl
+      000012 72               [ 7]   64 	ld	(hl), d
+      000013 23               [ 6]   65 	inc	hl
+      000014 71               [ 7]   66 	ld	(hl), c
+      000015 23               [ 6]   67 	inc	hl
+      000016 70               [ 7]   68 	ld	(hl), b
+                                     69 ;main.c:69: exp = (x.u >> 23) & 0xFF;
+      000017 21 00 00         [10]   70 	ld	hl, #0
+      00001A 39               [11]   71 	add	hl, sp
+      00001B E5               [11]   72 	push	hl
+      00001C 5E               [ 7]   73 	ld	e, (hl)
+      00001D 23               [ 6]   74 	inc	hl
+      00001E 56               [ 7]   75 	ld	d, (hl)
+      00001F 23               [ 6]   76 	inc	hl
+      000020 4E               [ 7]   77 	ld	c, (hl)
+      000021 23               [ 6]   78 	inc	hl
+      000022 46               [ 7]   79 	ld	b, (hl)
+      000023 E1               [10]   80 	pop	hl
+      000024 3E 07            [ 7]   81 	ld	a, #0x07
+      000026                         82 00116$:
+      000026 CB 38            [ 8]   83 	srl	b
+      000028 CB 19            [ 8]   84 	rr	c
+      00002A 3D               [ 4]   85 	dec	a
+      00002B 20 F9            [12]   86 	jr	NZ, 00116$
+      00002D 79               [ 4]   87 	ld	a,c
+                                     88 ;main.c:70: if (exp != 0 && exp != 0xFF)
+      00002E B7               [ 4]   89 	or	a, a
+      00002F 28 1D            [12]   90 	jr	Z, 00102$
+      000031 0C               [ 4]   91 	inc	c
+      000032 28 1A            [12]   92 	jr	Z, 00102$
+                                     93 ;main.c:71: x.u += (1UL << 23);    /* +1 to exponent field */
+      000034 E5               [11]   94 	push	hl
+      000035 4E               [ 7]   95 	ld	c, (hl)
+      000036 23               [ 6]   96 	inc	hl
+      000037 46               [ 7]   97 	ld	b, (hl)
+      000038 23               [ 6]   98 	inc	hl
+      000039 5E               [ 7]   99 	ld	e, (hl)
+      00003A 23               [ 6]  100 	inc	hl
+      00003B 56               [ 7]  101 	ld	d, (hl)
+      00003C E1               [10]  102 	pop	hl
+      00003D 7B               [ 4]  103 	ld	a, e
+      00003E C6 80            [ 7]  104 	add	a, #0x80
+      000040 5F               [ 4]  105 	ld	e, a
+      000041 7A               [ 4]  106 	ld	a, d
+      000042 CE 00            [ 7]  107 	adc	a, #0x00
+      000044 71               [ 7]  108 	ld	(hl), c
+      000045 23               [ 6]  109 	inc	hl
+      000046 70               [ 7]  110 	ld	(hl), b
+      000047 23               [ 6]  111 	inc	hl
+      000048 73               [ 7]  112 	ld	(hl), e
+      000049 23               [ 6]  113 	inc	hl
+      00004A 77               [ 7]  114 	ld	(hl), a
+      00004B 2B               [ 6]  115 	dec	hl
+      00004C 2B               [ 6]  116 	dec	hl
+      00004D 2B               [ 6]  117 	dec	hl
+      00004E                        118 00102$:
+                                    119 ;main.c:72: return x.u;
+      00004E 5E               [ 7]  120 	ld	e, (hl)
+      00004F 23               [ 6]  121 	inc	hl
+      000050 56               [ 7]  122 	ld	d, (hl)
+      000051 23               [ 6]  123 	inc	hl
+      000052 4E               [ 7]  124 	ld	c, (hl)
+      000053 23               [ 6]  125 	inc	hl
+      000054 66               [ 7]  126 	ld	h, (hl)
+                                    127 ;	spillPairReg hl
+      000055 69               [ 4]  128 	ld	l, c
+                                    129 ;	spillPairReg hl
+                                    130 ;	spillPairReg hl
+                                    131 ;main.c:73: }
+      000056 DD F9            [10]  132 	ld	sp, ix
+      000058 DD E1            [14]  133 	pop	ix
+      00005A C9               [10]  134 	ret
+                                    135 ;main.c:75: static float apu_to_ieee(uint32_t raw) {
+                                    136 ;	---------------------------------
+                                    137 ; Function apu_to_ieee
+                                    138 ; ---------------------------------
+      00005B                        139 _apu_to_ieee:
+      00005B DD E5            [15]  140 	push	ix
+      00005D DD 21 00 00      [14]  141 	ld	ix,#0
+      000061 DD 39            [15]  142 	add	ix,sp
+      000063 F5               [11]  143 	push	af
+      000064 F5               [11]  144 	push	af
+      000065 4D               [ 4]  145 	ld	c, l
+      000066 44               [ 4]  146 	ld	b, h
+                                    147 ;main.c:78: x.u = raw;
+      000067 21 00 00         [10]  148 	ld	hl, #0
+      00006A 39               [11]  149 	add	hl, sp
+      00006B 73               [ 7]  150 	ld	(hl), e
+      00006C 23               [ 6]  151 	inc	hl
+      00006D 72               [ 7]  152 	ld	(hl), d
+      00006E 23               [ 6]  153 	inc	hl
+      00006F 71               [ 7]  154 	ld	(hl), c
+      000070 23               [ 6]  155 	inc	hl
+      000071 70               [ 7]  156 	ld	(hl), b
+      000072 2B               [ 6]  157 	dec	hl
+      000073 2B               [ 6]  158 	dec	hl
+      000074 2B               [ 6]  159 	dec	hl
+                                    160 ;main.c:79: exp = (x.u >> 23) & 0xFF;
+      000075 E5               [11]  161 	push	hl
+      000076 7E               [ 7]  162 	ld	a, (hl)
+      000077 23               [ 6]  163 	inc	hl
+      000078 7E               [ 7]  164 	ld	a, (hl)
+      000079 23               [ 6]  165 	inc	hl
+      00007A 7E               [ 7]  166 	ld	a, (hl)
+      00007B 23               [ 6]  167 	inc	hl
+      00007C 7E               [ 7]  168 	ld	a, (hl)
+      00007D E1               [10]  169 	pop	hl
+      00007E 3E 07            [ 7]  170 	ld	a, #0x07
+      000080                        171 00116$:
+      000080 CB 38            [ 8]  172 	srl	b
+      000082 CB 19            [ 8]  173 	rr	c
+      000084 3D               [ 4]  174 	dec	a
+      000085 20 F9            [12]  175 	jr	NZ, 00116$
+      000087 79               [ 4]  176 	ld	a,c
+                                    177 ;main.c:80: if (exp != 0 && exp != 0xFF)
+      000088 B7               [ 4]  178 	or	a, a
+      000089 28 1A            [12]  179 	jr	Z, 00102$
+      00008B 0C               [ 4]  180 	inc	c
+      00008C 28 17            [12]  181 	jr	Z, 00102$
+                                    182 ;main.c:81: x.u -= (1UL << 23);    /* -1 from exponent field */
+      00008E E5               [11]  183 	push	hl
+      00008F 4E               [ 7]  184 	ld	c, (hl)
+      000090 23               [ 6]  185 	inc	hl
+      000091 46               [ 7]  186 	ld	b, (hl)
+      000092 23               [ 6]  187 	inc	hl
+      000093 5E               [ 7]  188 	ld	e, (hl)
+      000094 23               [ 6]  189 	inc	hl
+      000095 56               [ 7]  190 	ld	d, (hl)
+      000096 E1               [10]  191 	pop	hl
+      000097 7B               [ 4]  192 	ld	a,e
+      000098 C6 80            [ 7]  193 	add	a,#0x80
+      00009A 5F               [ 4]  194 	ld	e, a
+      00009B 7A               [ 4]  195 	ld	a, d
+      00009C CE FF            [ 7]  196 	adc	a, #0xff
+      00009E 71               [ 7]  197 	ld	(hl), c
+      00009F 23               [ 6]  198 	inc	hl
+      0000A0 70               [ 7]  199 	ld	(hl), b
+      0000A1 23               [ 6]  200 	inc	hl
+      0000A2 73               [ 7]  201 	ld	(hl), e
+      0000A3 23               [ 6]  202 	inc	hl
+      0000A4 77               [ 7]  203 	ld	(hl), a
+      0000A5                        204 00102$:
+                                    205 ;main.c:82: return x.f;
+      0000A5 21 00 00         [10]  206 	ld	hl, #0
+      0000A8 39               [11]  207 	add	hl, sp
+      0000A9 5E               [ 7]  208 	ld	e, (hl)
+      0000AA 23               [ 6]  209 	inc	hl
+      0000AB 56               [ 7]  210 	ld	d, (hl)
+      0000AC 23               [ 6]  211 	inc	hl
+      0000AD 4E               [ 7]  212 	ld	c, (hl)
+      0000AE 23               [ 6]  213 	inc	hl
+      0000AF 66               [ 7]  214 	ld	h, (hl)
+                                    215 ;	spillPairReg hl
+      0000B0 69               [ 4]  216 	ld	l, c
+                                    217 ;	spillPairReg hl
+                                    218 ;	spillPairReg hl
+                                    219 ;main.c:83: }
+      0000B1 DD F9            [10]  220 	ld	sp, ix
+      0000B3 DD E1            [14]  221 	pop	ix
+      0000B5 C9               [10]  222 	ret
+                                    223 ;main.c:88: static void apu_wait(void) {
+                                    224 ;	---------------------------------
+                                    225 ; Function apu_wait
+                                    226 ; ---------------------------------
+      0000B6                        227 _apu_wait:
+                                    228 ;main.c:89: while (apu_cmd & APU_BUSY)
+      0000B6                        229 00101$:
+      0000B6 DB 41            [11]  230 	in	a, (_apu_cmd)
+      0000B8 07               [ 4]  231 	rlca
+      0000B9 38 FB            [12]  232 	jr	C, 00101$
+                                    233 ;main.c:91: }
+      0000BB C9               [10]  234 	ret
+                                    235 ;main.c:93: static void apu_push(float f) {
+                                    236 ;	---------------------------------
+                                    237 ; Function apu_push
+                                    238 ; ---------------------------------
+      0000BC                        239 _apu_push:
+                                    240 ;main.c:94: uint32_t raw = ieee_to_apu(f);
+      0000BC CDr00r00         [17]  241 	call	_ieee_to_apu
+                                    242 ;main.c:95: apu_data = (uint8_t)(raw >> 24);
+      0000BF 7C               [ 4]  243 	ld	a, h
+      0000C0 D3 40            [11]  244 	out	(_apu_data), a
+                                    245 ;main.c:96: apu_data = (uint8_t)(raw >> 16);
+      0000C2 7D               [ 4]  246 	ld	a, l
+      0000C3 D3 40            [11]  247 	out	(_apu_data), a
+                                    248 ;main.c:97: apu_data = (uint8_t)(raw >>  8);
+      0000C5 7A               [ 4]  249 	ld	a, d
+      0000C6 D3 40            [11]  250 	out	(_apu_data), a
+                                    251 ;main.c:98: apu_data = (uint8_t)(raw      );
+      0000C8 7B               [ 4]  252 	ld	a, e
+      0000C9 D3 40            [11]  253 	out	(_apu_data), a
+                                    254 ;main.c:99: }
+      0000CB C9               [10]  255 	ret
+                                    256 ;main.c:101: static float apu_pop(void) {
+                                    257 ;	---------------------------------
+                                    258 ; Function apu_pop
+                                    259 ; ---------------------------------
+      0000CC                        260 _apu_pop:
+      0000CC DD E5            [15]  261 	push	ix
+      0000CE DD 21 00 00      [14]  262 	ld	ix,#0
+      0000D2 DD 39            [15]  263 	add	ix,sp
+      0000D4 F5               [11]  264 	push	af
+      0000D5 F5               [11]  265 	push	af
+                                    266 ;main.c:103: raw  = (uint32_t)apu_data << 24;
+      0000D6 DB 40            [11]  267 	in	a, (_apu_data)
+      0000D8 67               [ 4]  268 	ld	h, a
+                                    269 ;	spillPairReg hl
+                                    270 ;	spillPairReg hl
+      0000D9 11 00 00         [10]  271 	ld	de, #0x0000
+      0000DC 2E 00            [ 7]  272 	ld	l, #0x00
+                                    273 ;	spillPairReg hl
+                                    274 ;	spillPairReg hl
+                                    275 ;main.c:104: raw |= (uint32_t)apu_data << 16;
+      0000DE DB 40            [11]  276 	in	a, (_apu_data)
+      0000E0 DD 77 FC         [19]  277 	ld	-4 (ix), a
+      0000E3 AF               [ 4]  278 	xor	a, a
+      0000E4 DD 77 FD         [19]  279 	ld	-3 (ix), a
+      0000E7 DD 77 FE         [19]  280 	ld	-2 (ix), a
+      0000EA DD 77 FF         [19]  281 	ld	-1 (ix), a
+      0000ED 06 10            [ 7]  282 	ld	b, #0x10
+      0000EF                        283 00105$:
+      0000EF DD CB FC 26      [23]  284 	sla	-4 (ix)
+      0000F3 DD CB FD 16      [23]  285 	rl	-3 (ix)
+      0000F7 DD CB FE 16      [23]  286 	rl	-2 (ix)
+      0000FB DD CB FF 16      [23]  287 	rl	-1 (ix)
+      0000FF 10 EE            [13]  288 	djnz	00105$
+      000101 7B               [ 4]  289 	ld	a, e
+      000102 DD B6 FC         [19]  290 	or	a, -4 (ix)
+      000105 5F               [ 4]  291 	ld	e, a
+      000106 7A               [ 4]  292 	ld	a, d
+      000107 DD B6 FD         [19]  293 	or	a, -3 (ix)
+      00010A 57               [ 4]  294 	ld	d, a
+      00010B 7D               [ 4]  295 	ld	a, l
+      00010C DD B6 FE         [19]  296 	or	a, -2 (ix)
+      00010F 6F               [ 4]  297 	ld	l, a
+                                    298 ;	spillPairReg hl
+                                    299 ;	spillPairReg hl
+      000110 7C               [ 4]  300 	ld	a, h
+      000111 DD B6 FF         [19]  301 	or	a, -1 (ix)
+      000114 67               [ 4]  302 	ld	h, a
+                                    303 ;	spillPairReg hl
+                                    304 ;	spillPairReg hl
+                                    305 ;main.c:105: raw |= (uint32_t)apu_data <<  8;
+      000115 DB 40            [11]  306 	in	a, (_apu_data)
+      000117 DD 77 FC         [19]  307 	ld	-4 (ix), a
+      00011A AF               [ 4]  308 	xor	a, a
+      00011B DD 77 FD         [19]  309 	ld	-3 (ix), a
+      00011E DD 77 FE         [19]  310 	ld	-2 (ix), a
+      000121 DD 77 FF         [19]  311 	ld	-1 (ix), a
+      000124 06 08            [ 7]  312 	ld	b, #0x08
+      000126                        313 00107$:
+      000126 DD CB FC 26      [23]  314 	sla	-4 (ix)
+      00012A DD CB FD 16      [23]  315 	rl	-3 (ix)
+      00012E DD CB FE 16      [23]  316 	rl	-2 (ix)
+      000132 DD CB FF 16      [23]  317 	rl	-1 (ix)
+      000136 10 EE            [13]  318 	djnz	00107$
+      000138 7B               [ 4]  319 	ld	a, e
+      000139 DD B6 FC         [19]  320 	or	a, -4 (ix)
+      00013C 5F               [ 4]  321 	ld	e, a
+      00013D 7A               [ 4]  322 	ld	a, d
+      00013E DD B6 FD         [19]  323 	or	a, -3 (ix)
+      000141 57               [ 4]  324 	ld	d, a
+      000142 7D               [ 4]  325 	ld	a, l
+      000143 DD B6 FE         [19]  326 	or	a, -2 (ix)
+      000146 4F               [ 4]  327 	ld	c, a
+      000147 7C               [ 4]  328 	ld	a, h
+      000148 DD B6 FF         [19]  329 	or	a, -1 (ix)
+      00014B 47               [ 4]  330 	ld	b, a
+                                    331 ;main.c:106: raw |= (uint32_t)apu_data;
+      00014C DB 40            [11]  332 	in	a, (_apu_data)
+      00014E FD E5            [15]  333 	push	iy
+      000150 E3               [19]  334 	ex	(sp), hl
+      000151 26 00            [ 7]  335 	ld	h, #0x00
+                                    336 ;	spillPairReg hl
+                                    337 ;	spillPairReg hl
+      000153 E3               [19]  338 	ex	(sp), hl
+      000154 FD E1            [14]  339 	pop	iy
+      000156 21 00 00         [10]  340 	ld	hl, #0x0000
+      000159 B3               [ 4]  341 	or	a, e
+      00015A 5F               [ 4]  342 	ld	e, a
+      00015B FD E5            [15]  343 	push	iy
+      00015D DD 7E FB         [19]  344 	ld	a, -5 (ix)
+      000160 FD E1            [14]  345 	pop	iy
+      000162 B2               [ 4]  346 	or	a, d
+      000163 57               [ 4]  347 	ld	d, a
+      000164 7D               [ 4]  348 	ld	a, l
+      000165 B1               [ 4]  349 	or	a, c
+      000166 6F               [ 4]  350 	ld	l, a
+                                    351 ;	spillPairReg hl
+                                    352 ;	spillPairReg hl
+      000167 7C               [ 4]  353 	ld	a, h
+      000168 B0               [ 4]  354 	or	a, b
+      000169 67               [ 4]  355 	ld	h, a
+                                    356 ;	spillPairReg hl
+                                    357 ;	spillPairReg hl
+                                    358 ;main.c:107: return apu_to_ieee(raw);
+      00016A CDr5Br00         [17]  359 	call	_apu_to_ieee
+                                    360 ;main.c:108: }
+      00016D DD F9            [10]  361 	ld	sp, ix
+      00016F DD E1            [14]  362 	pop	ix
+      000171 C9               [10]  363 	ret
+                                    364 ;main.c:110: static void apu_exec(uint8_t cmd) {
+                                    365 ;	---------------------------------
+                                    366 ; Function apu_exec
+                                    367 ; ---------------------------------
+      000172                        368 _apu_exec:
+      000172 D3 41            [11]  369 	out	(_apu_cmd), a
+                                    370 ;main.c:112: apu_wait();
+                                    371 ;main.c:113: }
+      000174 C3rB6r00         [10]  372 	jp	_apu_wait
+                                    373 ;main.c:118: static float apu_sinf(float x)           { apu_push(x); apu_exec(APU_SIN); return apu_pop(); }
+                                    374 ;	---------------------------------
+                                    375 ; Function apu_sinf
+                                    376 ; ---------------------------------
+      000177                        377 _apu_sinf:
+      000177 CDrBCr00         [17]  378 	call	_apu_push
+      00017A 3E 11            [ 7]  379 	ld	a, #0x11
+      00017C CDr72r01         [17]  380 	call	_apu_exec
+      00017F C3rCCr00         [10]  381 	jp	_apu_pop
+                                    382 ;main.c:119: static float apu_expf(float x)           { apu_push(x); apu_exec(APU_EXP); return apu_pop(); }
+                                    383 ;	---------------------------------
+                                    384 ; Function apu_expf
+                                    385 ; ---------------------------------
+      000182                        386 _apu_expf:
+      000182 CDrBCr00         [17]  387 	call	_apu_push
+      000185 3E 19            [ 7]  388 	ld	a, #0x19
+      000187 CDr72r01         [17]  389 	call	_apu_exec
+      00018A C3rCCr00         [10]  390 	jp	_apu_pop
+                                    391 ;main.c:120: static float apu_mulf(float a, float b)  { apu_push(a); apu_push(b); apu_exec(APU_SMUL); return apu_pop(); }
+                                    392 ;	---------------------------------
+                                    393 ; Function apu_mulf
+                                    394 ; ---------------------------------
+      00018D                        395 _apu_mulf:
+      00018D CDrBCr00         [17]  396 	call	_apu_push
+      000190 E1               [10]  397 	pop	hl
+      000191 D1               [10]  398 	pop	de
+      000192 D5               [11]  399 	push	de
+      000193 E5               [11]  400 	push	hl
+                                    401 ;	spillPairReg hl
+                                    402 ;	spillPairReg hl
+      000194 21 04 00         [10]  403 	ld	hl, #0x4
+      000197 39               [11]  404 	add	hl, sp
+      000198 7E               [ 7]  405 	ld	a, (hl)
+      000199 23               [ 6]  406 	inc	hl
+      00019A 66               [ 7]  407 	ld	h, (hl)
+      00019B 6F               [ 4]  408 	ld	l, a
+                                    409 ;	spillPairReg hl
+                                    410 ;	spillPairReg hl
+      00019C CDrBCr00         [17]  411 	call	_apu_push
+      00019F 3E 03            [ 7]  412 	ld	a, #0x03
+      0001A1 CDr72r01         [17]  413 	call	_apu_exec
+      0001A4 CDrCCr00         [17]  414 	call	_apu_pop
+      0001A7 C1               [10]  415 	pop	bc
+      0001A8 F1               [10]  416 	pop	af
+      0001A9 F1               [10]  417 	pop	af
+      0001AA C5               [11]  418 	push	bc
+      0001AB C9               [10]  419 	ret
+                                    420 ;main.c:121: static float apu_divf(float a, float b)  { apu_push(a); apu_push(b); apu_exec(APU_SDIV); return apu_pop(); }
+                                    421 ;	---------------------------------
+                                    422 ; Function apu_divf
+                                    423 ; ---------------------------------
+      0001AC                        424 _apu_divf:
+      0001AC CDrBCr00         [17]  425 	call	_apu_push
+      0001AF E1               [10]  426 	pop	hl
+      0001B0 D1               [10]  427 	pop	de
+      0001B1 D5               [11]  428 	push	de
+      0001B2 E5               [11]  429 	push	hl
+                                    430 ;	spillPairReg hl
+                                    431 ;	spillPairReg hl
+      0001B3 21 04 00         [10]  432 	ld	hl, #0x4
+      0001B6 39               [11]  433 	add	hl, sp
+      0001B7 7E               [ 7]  434 	ld	a, (hl)
+      0001B8 23               [ 6]  435 	inc	hl
+      0001B9 66               [ 7]  436 	ld	h, (hl)
+      0001BA 6F               [ 4]  437 	ld	l, a
+                                    438 ;	spillPairReg hl
+                                    439 ;	spillPairReg hl
+      0001BB CDrBCr00         [17]  440 	call	_apu_push
+      0001BE 3E 04            [ 7]  441 	ld	a, #0x04
+      0001C0 CDr72r01         [17]  442 	call	_apu_exec
+      0001C3 CDrCCr00         [17]  443 	call	_apu_pop
+      0001C6 C1               [10]  444 	pop	bc
+      0001C7 F1               [10]  445 	pop	af
+      0001C8 F1               [10]  446 	pop	af
+      0001C9 C5               [11]  447 	push	bc
+      0001CA C9               [10]  448 	ret
+                                    449 ;main.c:122: static float apu_addf(float a, float b)  { apu_push(a); apu_push(b); apu_exec(APU_SADD); return apu_pop(); }
+                                    450 ;	---------------------------------
+                                    451 ; Function apu_addf
+                                    452 ; ---------------------------------
+      0001CB                        453 _apu_addf:
+      0001CB CDrBCr00         [17]  454 	call	_apu_push
+      0001CE E1               [10]  455 	pop	hl
+      0001CF D1               [10]  456 	pop	de
+      0001D0 D5               [11]  457 	push	de
+      0001D1 E5               [11]  458 	push	hl
+                                    459 ;	spillPairReg hl
+                                    460 ;	spillPairReg hl
+      0001D2 21 04 00         [10]  461 	ld	hl, #0x4
+      0001D5 39               [11]  462 	add	hl, sp
+      0001D6 7E               [ 7]  463 	ld	a, (hl)
+      0001D7 23               [ 6]  464 	inc	hl
+      0001D8 66               [ 7]  465 	ld	h, (hl)
+      0001D9 6F               [ 4]  466 	ld	l, a
+                                    467 ;	spillPairReg hl
+                                    468 ;	spillPairReg hl
+      0001DA CDrBCr00         [17]  469 	call	_apu_push
+      0001DD 3E 01            [ 7]  470 	ld	a, #0x01
+      0001DF CDr72r01         [17]  471 	call	_apu_exec
+      0001E2 CDrCCr00         [17]  472 	call	_apu_pop
+      0001E5 C1               [10]  473 	pop	bc
+      0001E6 F1               [10]  474 	pop	af
+      0001E7 F1               [10]  475 	pop	af
+      0001E8 C5               [11]  476 	push	bc
+      0001E9 C9               [10]  477 	ret
+                                    478 ;main.c:127: static float get_Bmn(int m, int n, float u0) {
+                                    479 ;	---------------------------------
+                                    480 ; Function get_Bmn
+                                    481 ; ---------------------------------
+      0001EA                        482 _get_Bmn:
+      0001EA DD E5            [15]  483 	push	ix
+      0001EC DD 21 00 00      [14]  484 	ld	ix,#0
+      0001F0 DD 39            [15]  485 	add	ix,sp
+      0001F2 4B               [ 4]  486 	ld	c, e
+      0001F3 42               [ 4]  487 	ld	b, d
+                                    488 ;main.c:128: if (m % 2 == 0 || n % 2 == 0) return 0.0f;
+      0001F4 E5               [11]  489 	push	hl
+      0001F5 C5               [11]  490 	push	bc
+      0001F6 11 02 00         [10]  491 	ld	de, #0x0002
+      0001F9 CDr00r00         [17]  492 	call	__modsint
+      0001FC C1               [10]  493 	pop	bc
+      0001FD E1               [10]  494 	pop	hl
+      0001FE 7A               [ 4]  495 	ld	a, d
+      0001FF B3               [ 4]  496 	or	a, e
+      000200 28 10            [12]  497 	jr	Z, 00101$
+      000202 E5               [11]  498 	push	hl
+      000203 C5               [11]  499 	push	bc
+      000204 11 02 00         [10]  500 	ld	de, #0x0002
+      000207 69               [ 4]  501 	ld	l, c
+                                    502 ;	spillPairReg hl
+                                    503 ;	spillPairReg hl
+      000208 60               [ 4]  504 	ld	h, b
+                                    505 ;	spillPairReg hl
+                                    506 ;	spillPairReg hl
+      000209 CDr00r00         [17]  507 	call	__modsint
+      00020C C1               [10]  508 	pop	bc
+      00020D E1               [10]  509 	pop	hl
+      00020E 7A               [ 4]  510 	ld	a, d
+      00020F B3               [ 4]  511 	or	a, e
+      000210 20 08            [12]  512 	jr	NZ, 00102$
+      000212                        513 00101$:
+      000212 11 00 00         [10]  514 	ld	de, #0x0000
+      000215 21 00 00         [10]  515 	ld	hl, #0x0000
+      000218 18 3A            [12]  516 	jr	00104$
+      00021A                        517 00102$:
+                                    518 ;main.c:130: return apu_divf(16.0f * u0, (float)(m * n) * PI * PI);
+      00021A 59               [ 4]  519 	ld	e, c
+      00021B 50               [ 4]  520 	ld	d, b
+      00021C CDr00r00         [17]  521 	call	__mulint
+      00021F EB               [ 4]  522 	ex	de, hl
+      000220 CDr00r00         [17]  523 	call	___sint2fs
+      000223 E5               [11]  524 	push	hl
+      000224 D5               [11]  525 	push	de
+      000225 11 E6 E9         [10]  526 	ld	de, #0xe9e6
+      000228 21 1D 41         [10]  527 	ld	hl, #0x411d
+      00022B CDr00r00         [17]  528 	call	___fsmul
+      00022E E5               [11]  529 	push	hl
+      00022F FD E1            [14]  530 	pop	iy
+      000231 D5               [11]  531 	push	de
+      000232 FD E5            [15]  532 	push	iy
+      000234 DD 6E 06         [19]  533 	ld	l, 6 (ix)
+                                    534 ;	spillPairReg hl
+                                    535 ;	spillPairReg hl
+      000237 DD 66 07         [19]  536 	ld	h, 7 (ix)
+                                    537 ;	spillPairReg hl
+                                    538 ;	spillPairReg hl
+      00023A E5               [11]  539 	push	hl
+      00023B DD 6E 04         [19]  540 	ld	l, 4 (ix)
+                                    541 ;	spillPairReg hl
+                                    542 ;	spillPairReg hl
+      00023E DD 66 05         [19]  543 	ld	h, 5 (ix)
+                                    544 ;	spillPairReg hl
+                                    545 ;	spillPairReg hl
+      000241 E5               [11]  546 	push	hl
+      000242 11 00 00         [10]  547 	ld	de, #0x0000
+      000245 21 80 41         [10]  548 	ld	hl, #0x4180
+      000248 CDr00r00         [17]  549 	call	___fsmul
+      00024B FD E1            [14]  550 	pop	iy
+      00024D C1               [10]  551 	pop	bc
+      00024E FD E5            [15]  552 	push	iy
+      000250 C5               [11]  553 	push	bc
+      000251 CDrACr01         [17]  554 	call	_apu_divf
+      000254                        555 00104$:
+                                    556 ;main.c:131: }
+      000254 DD E1            [14]  557 	pop	ix
+      000256 C9               [10]  558 	ret
+                                    559 ;main.c:133: static float solve_2d_heat(float x, float y, float t,
+                                    560 ;	---------------------------------
+                                    561 ; Function solve_2d_heat
+                                    562 ; ---------------------------------
+      000257                        563 _solve_2d_heat:
+      000257 DD E5            [15]  564 	push	ix
+      000259 DD 21 00 00      [14]  565 	ld	ix,#0
+      00025D DD 39            [15]  566 	add	ix,sp
+      00025F FD 21 82 FF      [14]  567 	ld	iy, #-126
+      000263 FD 39            [15]  568 	add	iy, sp
+      000265 FD F9            [10]  569 	ld	sp, iy
+      000267 DD 73 FA         [19]  570 	ld	-6 (ix), e
+      00026A DD 72 FB         [19]  571 	ld	-5 (ix), d
+      00026D DD 75 FC         [19]  572 	ld	-4 (ix), l
+      000270 DD 74 FD         [19]  573 	ld	-3 (ix), h
+                                    574 ;main.c:135: float u = 0.0f;
+      000273 AF               [ 4]  575 	xor	a, a
+      000274 DD 77 DA         [19]  576 	ld	-38 (ix), a
+      000277 DD 77 DB         [19]  577 	ld	-37 (ix), a
+      00027A DD 77 DC         [19]  578 	ld	-36 (ix), a
+      00027D DD 77 DD         [19]  579 	ld	-35 (ix), a
+                                    580 ;main.c:145: for (m = 1; m <= MODES; m++)
+      000280 01 01 00         [10]  581 	ld	bc, #0x0001
+      000283                        582 00108$:
+                                    583 ;main.c:146: sin_mx[m] = apu_sinf(apu_divf((float)m * PI * x, L));
+      000283 69               [ 4]  584 	ld	l, c
+                                    585 ;	spillPairReg hl
+                                    586 ;	spillPairReg hl
+      000284 60               [ 4]  587 	ld	h, b
+                                    588 ;	spillPairReg hl
+                                    589 ;	spillPairReg hl
+      000285 29               [11]  590 	add	hl, hl
+      000286 29               [11]  591 	add	hl, hl
+      000287 EB               [ 4]  592 	ex	de,hl
+      000288 D5               [11]  593 	push	de
+      000289 21 02 00         [10]  594 	ld	hl, #2
+      00028C 39               [11]  595 	add	hl, sp
+      00028D 19               [11]  596 	add	hl, de
+      00028E D1               [10]  597 	pop	de
+      00028F DD 75 FE         [19]  598 	ld	-2 (ix), l
+      000292 DD 74 FF         [19]  599 	ld	-1 (ix), h
+      000295 C5               [11]  600 	push	bc
+      000296 69               [ 4]  601 	ld	l, c
+                                    602 ;	spillPairReg hl
+                                    603 ;	spillPairReg hl
+      000297 60               [ 4]  604 	ld	h, b
+                                    605 ;	spillPairReg hl
+                                    606 ;	spillPairReg hl
+      000298 CDr00r00         [17]  607 	call	___sint2fs
+      00029B E5               [11]  608 	push	hl
+      00029C D5               [11]  609 	push	de
+      00029D 11 DB 0F         [10]  610 	ld	de, #0x0fdb
+      0002A0 21 49 40         [10]  611 	ld	hl, #0x4049
+      0002A3 CDr00r00         [17]  612 	call	___fsmul
+      0002A6 E5               [11]  613 	push	hl
+      0002A7 DD 6E FC         [19]  614 	ld	l, -4 (ix)
+                                    615 ;	spillPairReg hl
+                                    616 ;	spillPairReg hl
+      0002AA DD 66 FD         [19]  617 	ld	h, -3 (ix)
+                                    618 ;	spillPairReg hl
+                                    619 ;	spillPairReg hl
+      0002AD E3               [19]  620 	ex	(sp), hl
+      0002AE E5               [11]  621 	push	hl
+      0002AF DD 6E FA         [19]  622 	ld	l, -6 (ix)
+                                    623 ;	spillPairReg hl
+                                    624 ;	spillPairReg hl
+      0002B2 DD 66 FB         [19]  625 	ld	h, -5 (ix)
+                                    626 ;	spillPairReg hl
+                                    627 ;	spillPairReg hl
+      0002B5 E3               [19]  628 	ex	(sp), hl
+      0002B6 CDr00r00         [17]  629 	call	___fsmul
+      0002B9 E5               [11]  630 	push	hl
+      0002BA DD 6E 0E         [19]  631 	ld	l, 14 (ix)
+                                    632 ;	spillPairReg hl
+                                    633 ;	spillPairReg hl
+      0002BD DD 66 0F         [19]  634 	ld	h, 15 (ix)
+                                    635 ;	spillPairReg hl
+                                    636 ;	spillPairReg hl
+      0002C0 E3               [19]  637 	ex	(sp), hl
+      0002C1 E5               [11]  638 	push	hl
+      0002C2 DD 6E 0C         [19]  639 	ld	l, 12 (ix)
+                                    640 ;	spillPairReg hl
+                                    641 ;	spillPairReg hl
+      0002C5 DD 66 0D         [19]  642 	ld	h, 13 (ix)
+                                    643 ;	spillPairReg hl
+                                    644 ;	spillPairReg hl
+      0002C8 E3               [19]  645 	ex	(sp), hl
+      0002C9 CDrACr01         [17]  646 	call	_apu_divf
+      0002CC CDr77r01         [17]  647 	call	_apu_sinf
+      0002CF DD 73 F6         [19]  648 	ld	-10 (ix), e
+      0002D2 DD 72 F7         [19]  649 	ld	-9 (ix), d
+      0002D5 DD 75 F8         [19]  650 	ld	-8 (ix), l
+      0002D8 DD 74 F9         [19]  651 	ld	-7 (ix), h
+      0002DB DD 5E FE         [19]  652 	ld	e, -2 (ix)
+      0002DE DD 56 FF         [19]  653 	ld	d, -1 (ix)
+      0002E1 21 76 00         [10]  654 	ld	hl, #118
+      0002E4 39               [11]  655 	add	hl, sp
+      0002E5 01 04 00         [10]  656 	ld	bc, #0x0004
+      0002E8 ED B0            [21]  657 	ldir
+      0002EA C1               [10]  658 	pop	bc
+                                    659 ;main.c:145: for (m = 1; m <= MODES; m++)
+      0002EB 03               [ 6]  660 	inc	bc
+      0002EC 3E 0A            [ 7]  661 	ld	a, #0x0a
+      0002EE B9               [ 4]  662 	cp	a, c
+      0002EF 3E 00            [ 7]  663 	ld	a, #0x00
+      0002F1 98               [ 4]  664 	sbc	a, b
+      0002F2 E2rF7r02         [10]  665 	jp	PO, 00166$
+      0002F5 EE 80            [ 7]  666 	xor	a, #0x80
+      0002F7                        667 00166$:
+      0002F7 F2r83r02         [10]  668 	jp	P, 00108$
+                                    669 ;main.c:147: for (n = 1; n <= MODES; n++)
+      0002FA 01 01 00         [10]  670 	ld	bc, #0x0001
+      0002FD                        671 00110$:
+                                    672 ;main.c:148: sin_ny[n] = apu_sinf(apu_divf((float)n * PI * y, W));
+      0002FD 69               [ 4]  673 	ld	l, c
+                                    674 ;	spillPairReg hl
+                                    675 ;	spillPairReg hl
+      0002FE 60               [ 4]  676 	ld	h, b
+                                    677 ;	spillPairReg hl
+                                    678 ;	spillPairReg hl
+      0002FF 29               [11]  679 	add	hl, hl
+      000300 29               [11]  680 	add	hl, hl
+      000301 EB               [ 4]  681 	ex	de,hl
+      000302 D5               [11]  682 	push	de
+      000303 21 2E 00         [10]  683 	ld	hl, #46
+      000306 39               [11]  684 	add	hl, sp
+      000307 19               [11]  685 	add	hl, de
+      000308 D1               [10]  686 	pop	de
+      000309 DD 75 FE         [19]  687 	ld	-2 (ix), l
+      00030C DD 74 FF         [19]  688 	ld	-1 (ix), h
+      00030F C5               [11]  689 	push	bc
+      000310 69               [ 4]  690 	ld	l, c
+                                    691 ;	spillPairReg hl
+                                    692 ;	spillPairReg hl
+      000311 60               [ 4]  693 	ld	h, b
+                                    694 ;	spillPairReg hl
+                                    695 ;	spillPairReg hl
+      000312 CDr00r00         [17]  696 	call	___sint2fs
+      000315 E5               [11]  697 	push	hl
+      000316 D5               [11]  698 	push	de
+      000317 11 DB 0F         [10]  699 	ld	de, #0x0fdb
+      00031A 21 49 40         [10]  700 	ld	hl, #0x4049
+      00031D CDr00r00         [17]  701 	call	___fsmul
+      000320 E5               [11]  702 	push	hl
+      000321 DD 6E 06         [19]  703 	ld	l, 6 (ix)
+                                    704 ;	spillPairReg hl
+                                    705 ;	spillPairReg hl
+      000324 DD 66 07         [19]  706 	ld	h, 7 (ix)
+                                    707 ;	spillPairReg hl
+                                    708 ;	spillPairReg hl
+      000327 E3               [19]  709 	ex	(sp), hl
+      000328 E5               [11]  710 	push	hl
+      000329 DD 6E 04         [19]  711 	ld	l, 4 (ix)
+                                    712 ;	spillPairReg hl
+                                    713 ;	spillPairReg hl
+      00032C DD 66 05         [19]  714 	ld	h, 5 (ix)
+                                    715 ;	spillPairReg hl
+                                    716 ;	spillPairReg hl
+      00032F E3               [19]  717 	ex	(sp), hl
+      000330 CDr00r00         [17]  718 	call	___fsmul
+      000333 E5               [11]  719 	push	hl
+      000334 DD 6E 12         [19]  720 	ld	l, 18 (ix)
+                                    721 ;	spillPairReg hl
+                                    722 ;	spillPairReg hl
+      000337 DD 66 13         [19]  723 	ld	h, 19 (ix)
+                                    724 ;	spillPairReg hl
+                                    725 ;	spillPairReg hl
+      00033A E3               [19]  726 	ex	(sp), hl
+      00033B E5               [11]  727 	push	hl
+      00033C DD 6E 10         [19]  728 	ld	l, 16 (ix)
+                                    729 ;	spillPairReg hl
+                                    730 ;	spillPairReg hl
+      00033F DD 66 11         [19]  731 	ld	h, 17 (ix)
+                                    732 ;	spillPairReg hl
+                                    733 ;	spillPairReg hl
+      000342 E3               [19]  734 	ex	(sp), hl
+      000343 CDrACr01         [17]  735 	call	_apu_divf
+      000346 CDr77r01         [17]  736 	call	_apu_sinf
+      000349 DD 73 F6         [19]  737 	ld	-10 (ix), e
+      00034C DD 72 F7         [19]  738 	ld	-9 (ix), d
+      00034F DD 75 F8         [19]  739 	ld	-8 (ix), l
+      000352 DD 74 F9         [19]  740 	ld	-7 (ix), h
+      000355 DD 5E FE         [19]  741 	ld	e, -2 (ix)
+      000358 DD 56 FF         [19]  742 	ld	d, -1 (ix)
+      00035B 21 76 00         [10]  743 	ld	hl, #118
+      00035E 39               [11]  744 	add	hl, sp
+      00035F 01 04 00         [10]  745 	ld	bc, #0x0004
+      000362 ED B0            [21]  746 	ldir
+      000364 C1               [10]  747 	pop	bc
+                                    748 ;main.c:147: for (n = 1; n <= MODES; n++)
+      000365 03               [ 6]  749 	inc	bc
+      000366 3E 0A            [ 7]  750 	ld	a, #0x0a
+      000368 B9               [ 4]  751 	cp	a, c
+      000369 3E 00            [ 7]  752 	ld	a, #0x00
+      00036B 98               [ 4]  753 	sbc	a, b
+      00036C E2r71r03         [10]  754 	jp	PO, 00167$
+      00036F EE 80            [ 7]  755 	xor	a, #0x80
+      000371                        756 00167$:
+      000371 F2rFDr02         [10]  757 	jp	P, 00110$
+                                    758 ;main.c:150: for (m = 1; m <= MODES; m++) {
+      000374 DD 6E 0E         [19]  759 	ld	l, 14 (ix)
+                                    760 ;	spillPairReg hl
+                                    761 ;	spillPairReg hl
+      000377 DD 66 0F         [19]  762 	ld	h, 15 (ix)
+                                    763 ;	spillPairReg hl
+                                    764 ;	spillPairReg hl
+      00037A E5               [11]  765 	push	hl
+      00037B DD 6E 0C         [19]  766 	ld	l, 12 (ix)
+                                    767 ;	spillPairReg hl
+                                    768 ;	spillPairReg hl
+      00037E DD 66 0D         [19]  769 	ld	h, 13 (ix)
+                                    770 ;	spillPairReg hl
+                                    771 ;	spillPairReg hl
+      000381 E5               [11]  772 	push	hl
+      000382 DD 5E 0C         [19]  773 	ld	e, 12 (ix)
+      000385 DD 56 0D         [19]  774 	ld	d, 13 (ix)
+      000388 DD 6E 0E         [19]  775 	ld	l, 14 (ix)
+                                    776 ;	spillPairReg hl
+                                    777 ;	spillPairReg hl
+      00038B DD 66 0F         [19]  778 	ld	h, 15 (ix)
+                                    779 ;	spillPairReg hl
+                                    780 ;	spillPairReg hl
+      00038E CDr00r00         [17]  781 	call	___fsmul
+      000391 DD 73 DE         [19]  782 	ld	-34 (ix), e
+      000394 DD 72 DF         [19]  783 	ld	-33 (ix), d
+      000397 DD 75 E0         [19]  784 	ld	-32 (ix), l
+      00039A DD 74 E1         [19]  785 	ld	-31 (ix), h
+      00039D DD 6E 12         [19]  786 	ld	l, 18 (ix)
+                                    787 ;	spillPairReg hl
+                                    788 ;	spillPairReg hl
+      0003A0 DD 66 13         [19]  789 	ld	h, 19 (ix)
+                                    790 ;	spillPairReg hl
+                                    791 ;	spillPairReg hl
+      0003A3 E5               [11]  792 	push	hl
+      0003A4 DD 6E 10         [19]  793 	ld	l, 16 (ix)
+                                    794 ;	spillPairReg hl
+                                    795 ;	spillPairReg hl
+      0003A7 DD 66 11         [19]  796 	ld	h, 17 (ix)
+                                    797 ;	spillPairReg hl
+                                    798 ;	spillPairReg hl
+      0003AA E5               [11]  799 	push	hl
+      0003AB DD 5E 10         [19]  800 	ld	e, 16 (ix)
+      0003AE DD 56 11         [19]  801 	ld	d, 17 (ix)
+      0003B1 DD 6E 12         [19]  802 	ld	l, 18 (ix)
+                                    803 ;	spillPairReg hl
+                                    804 ;	spillPairReg hl
+      0003B4 DD 66 13         [19]  805 	ld	h, 19 (ix)
+                                    806 ;	spillPairReg hl
+                                    807 ;	spillPairReg hl
+      0003B7 CDr00r00         [17]  808 	call	___fsmul
+      0003BA DD 73 E2         [19]  809 	ld	-30 (ix), e
+      0003BD DD 72 E3         [19]  810 	ld	-29 (ix), d
+      0003C0 DD 75 E4         [19]  811 	ld	-28 (ix), l
+      0003C3 DD 74 E5         [19]  812 	ld	-27 (ix), h
+      0003C6 DD 7E 17         [19]  813 	ld	a, 23 (ix)
+      0003C9 EE 80            [ 7]  814 	xor	a,#0x80
+      0003CB DD 77 E9         [19]  815 	ld	-23 (ix), a
+      0003CE DD 7E 14         [19]  816 	ld	a, 20 (ix)
+      0003D1 DD 77 E6         [19]  817 	ld	-26 (ix), a
+      0003D4 DD 7E 15         [19]  818 	ld	a, 21 (ix)
+      0003D7 DD 77 E7         [19]  819 	ld	-25 (ix), a
+      0003DA DD 7E 16         [19]  820 	ld	a, 22 (ix)
+      0003DD DD 77 E8         [19]  821 	ld	-24 (ix), a
+      0003E0 01 01 00         [10]  822 	ld	bc, #0x0001
+                                    823 ;main.c:151: for (n = 1; n <= MODES; n++) {
+      0003E3                        824 00122$:
+      0003E3 C5               [11]  825 	push	bc
+      0003E4 59               [ 4]  826 	ld	e, c
+      0003E5 50               [ 4]  827 	ld	d, b
+      0003E6 69               [ 4]  828 	ld	l, c
+                                    829 ;	spillPairReg hl
+                                    830 ;	spillPairReg hl
+      0003E7 60               [ 4]  831 	ld	h, b
+                                    832 ;	spillPairReg hl
+                                    833 ;	spillPairReg hl
+      0003E8 CDr00r00         [17]  834 	call	__mulint
+      0003EB DD 73 EA         [19]  835 	ld	-22 (ix), e
+      0003EE DD 72 EB         [19]  836 	ld	-21 (ix), d
+      0003F1 C1               [10]  837 	pop	bc
+      0003F2 69               [ 4]  838 	ld	l, c
+                                    839 ;	spillPairReg hl
+                                    840 ;	spillPairReg hl
+      0003F3 60               [ 4]  841 	ld	h, b
+                                    842 ;	spillPairReg hl
+                                    843 ;	spillPairReg hl
+      0003F4 29               [11]  844 	add	hl, hl
+      0003F5 29               [11]  845 	add	hl, hl
+      0003F6 EB               [ 4]  846 	ex	de,hl
+      0003F7 D5               [11]  847 	push	de
+      0003F8 21 02 00         [10]  848 	ld	hl, #2
+      0003FB 39               [11]  849 	add	hl, sp
+      0003FC 19               [11]  850 	add	hl, de
+      0003FD D1               [10]  851 	pop	de
+      0003FE DD 75 EC         [19]  852 	ld	-20 (ix), l
+      000401 DD 74 ED         [19]  853 	ld	-19 (ix), h
+      000404 DD 36 FE 01      [19]  854 	ld	-2 (ix), #0x01
+      000408 DD 36 FF 00      [19]  855 	ld	-1 (ix), #0
+      00040C                        856 00112$:
+                                    857 ;main.c:154: b_mn = get_Bmn(m, n, u0);
+      00040C C5               [11]  858 	push	bc
+      00040D DD 6E 1A         [19]  859 	ld	l, 26 (ix)
+                                    860 ;	spillPairReg hl
+                                    861 ;	spillPairReg hl
+      000410 DD 66 1B         [19]  862 	ld	h, 27 (ix)
+                                    863 ;	spillPairReg hl
+                                    864 ;	spillPairReg hl
+      000413 E5               [11]  865 	push	hl
+      000414 DD 6E 18         [19]  866 	ld	l, 24 (ix)
+                                    867 ;	spillPairReg hl
+                                    868 ;	spillPairReg hl
+      000417 DD 66 19         [19]  869 	ld	h, 25 (ix)
+                                    870 ;	spillPairReg hl
+                                    871 ;	spillPairReg hl
+      00041A E5               [11]  872 	push	hl
+      00041B DD 5E FE         [19]  873 	ld	e, -2 (ix)
+      00041E DD 56 FF         [19]  874 	ld	d, -1 (ix)
+      000421 69               [ 4]  875 	ld	l, c
+                                    876 ;	spillPairReg hl
+                                    877 ;	spillPairReg hl
+      000422 60               [ 4]  878 	ld	h, b
+                                    879 ;	spillPairReg hl
+                                    880 ;	spillPairReg hl
+      000423 CDrEAr01         [17]  881 	call	_get_Bmn
+      000426 F1               [10]  882 	pop	af
+      000427 F1               [10]  883 	pop	af
+      000428 DD 73 F6         [19]  884 	ld	-10 (ix), e
+      00042B DD 72 F7         [19]  885 	ld	-9 (ix), d
+      00042E DD 75 F8         [19]  886 	ld	-8 (ix), l
+      000431 DD 74 F9         [19]  887 	ld	-7 (ix), h
+      000434 C1               [10]  888 	pop	bc
+      000435 DD 7E F6         [19]  889 	ld	a, -10 (ix)
+      000438 DD 77 EE         [19]  890 	ld	-18 (ix), a
+      00043B DD 7E F7         [19]  891 	ld	a, -9 (ix)
+      00043E DD 77 EF         [19]  892 	ld	-17 (ix), a
+      000441 DD 7E F8         [19]  893 	ld	a, -8 (ix)
+      000444 DD 77 F0         [19]  894 	ld	-16 (ix), a
+      000447 DD 7E F9         [19]  895 	ld	a, -7 (ix)
+      00044A DD 77 F1         [19]  896 	ld	-15 (ix), a
+                                    897 ;main.c:155: if (b_mn == 0.0f) continue;     /* odd/even shortcut */
+      00044D DD 7E F9         [19]  898 	ld	a, -7 (ix)
+      000450 CB BF            [ 8]  899 	res	7, a
+      000452 DD B6 F8         [19]  900 	or	a, -8 (ix)
+      000455 DD B6 F7         [19]  901 	or	a, -9 (ix)
+      000458 DD B6 F6         [19]  902 	or	a, -10 (ix)
+      00045B CArB1r05         [10]  903 	jp	Z, 00105$
+                                    904 ;main.c:159: (float)(m * m) / (L * L) +
+      00045E C5               [11]  905 	push	bc
+      00045F DD 6E EA         [19]  906 	ld	l, -22 (ix)
+                                    907 ;	spillPairReg hl
+                                    908 ;	spillPairReg hl
+      000462 DD 66 EB         [19]  909 	ld	h, -21 (ix)
+                                    910 ;	spillPairReg hl
+                                    911 ;	spillPairReg hl
+      000465 CDr00r00         [17]  912 	call	___sint2fs
+      000468 E5               [11]  913 	push	hl
+      000469 DD 6E E0         [19]  914 	ld	l, -32 (ix)
+                                    915 ;	spillPairReg hl
+                                    916 ;	spillPairReg hl
+      00046C DD 66 E1         [19]  917 	ld	h, -31 (ix)
+                                    918 ;	spillPairReg hl
+                                    919 ;	spillPairReg hl
+      00046F E3               [19]  920 	ex	(sp), hl
+      000470 E5               [11]  921 	push	hl
+      000471 DD 6E DE         [19]  922 	ld	l, -34 (ix)
+                                    923 ;	spillPairReg hl
+                                    924 ;	spillPairReg hl
+      000474 DD 66 DF         [19]  925 	ld	h, -33 (ix)
+                                    926 ;	spillPairReg hl
+                                    927 ;	spillPairReg hl
+      000477 E3               [19]  928 	ex	(sp), hl
+                                    929 ;main.c:160: (float)(n * n) / (W * W)
+      000478 CDr00r00         [17]  930 	call	___fsdiv
+      00047B DD 73 F6         [19]  931 	ld	-10 (ix), e
+      00047E DD 72 F7         [19]  932 	ld	-9 (ix), d
+      000481 DD 75 F8         [19]  933 	ld	-8 (ix), l
+      000484 DD 74 F9         [19]  934 	ld	-7 (ix), h
+      000487 DD 5E FE         [19]  935 	ld	e, -2 (ix)
+      00048A DD 56 FF         [19]  936 	ld	d, -1 (ix)
+      00048D DD 6E FE         [19]  937 	ld	l, -2 (ix)
+                                    938 ;	spillPairReg hl
+                                    939 ;	spillPairReg hl
+      000490 DD 66 FF         [19]  940 	ld	h, -1 (ix)
+                                    941 ;	spillPairReg hl
+                                    942 ;	spillPairReg hl
+      000493 CDr00r00         [17]  943 	call	__mulint
+      000496 EB               [ 4]  944 	ex	de, hl
+      000497 CDr00r00         [17]  945 	call	___sint2fs
+      00049A E5               [11]  946 	push	hl
+      00049B DD 6E E4         [19]  947 	ld	l, -28 (ix)
+                                    948 ;	spillPairReg hl
+                                    949 ;	spillPairReg hl
+      00049E DD 66 E5         [19]  950 	ld	h, -27 (ix)
+                                    951 ;	spillPairReg hl
+                                    952 ;	spillPairReg hl
+      0004A1 E3               [19]  953 	ex	(sp), hl
+      0004A2 E5               [11]  954 	push	hl
+      0004A3 DD 6E E2         [19]  955 	ld	l, -30 (ix)
+                                    956 ;	spillPairReg hl
+                                    957 ;	spillPairReg hl
+      0004A6 DD 66 E3         [19]  958 	ld	h, -29 (ix)
+                                    959 ;	spillPairReg hl
+                                    960 ;	spillPairReg hl
+      0004A9 E3               [19]  961 	ex	(sp), hl
+      0004AA CDr00r00         [17]  962 	call	___fsdiv
+      0004AD E5               [11]  963 	push	hl
+      0004AE D5               [11]  964 	push	de
+      0004AF DD 5E F6         [19]  965 	ld	e, -10 (ix)
+      0004B2 DD 56 F7         [19]  966 	ld	d, -9 (ix)
+      0004B5 DD 6E F8         [19]  967 	ld	l, -8 (ix)
+                                    968 ;	spillPairReg hl
+                                    969 ;	spillPairReg hl
+      0004B8 DD 66 F9         [19]  970 	ld	h, -7 (ix)
+                                    971 ;	spillPairReg hl
+                                    972 ;	spillPairReg hl
+      0004BB CDr00r00         [17]  973 	call	___fsadd
+      0004BE E5               [11]  974 	push	hl
+      0004BF D5               [11]  975 	push	de
+      0004C0 11 E6 E9         [10]  976 	ld	de, #0xe9e6
+      0004C3 21 1D 41         [10]  977 	ld	hl, #0x411d
+      0004C6 CDr00r00         [17]  978 	call	___fsmul
+      0004C9 C1               [10]  979 	pop	bc
+      0004CA DD 73 F6         [19]  980 	ld	-10 (ix), e
+      0004CD DD 72 F7         [19]  981 	ld	-9 (ix), d
+      0004D0 DD 75 F8         [19]  982 	ld	-8 (ix), l
+      0004D3 DD 74 F9         [19]  983 	ld	-7 (ix), h
+                                    984 ;main.c:164: spatial = apu_mulf(sin_mx[m], sin_ny[n]);
+      0004D6 DD 6E FE         [19]  985 	ld	l, -2 (ix)
+                                    986 ;	spillPairReg hl
+                                    987 ;	spillPairReg hl
+      0004D9 DD 66 FF         [19]  988 	ld	h, -1 (ix)
+                                    989 ;	spillPairReg hl
+                                    990 ;	spillPairReg hl
+      0004DC 29               [11]  991 	add	hl, hl
+      0004DD 29               [11]  992 	add	hl, hl
+      0004DE EB               [ 4]  993 	ex	de,hl
+      0004DF 21 2C 00         [10]  994 	ld	hl, #44
+      0004E2 39               [11]  995 	add	hl, sp
+      0004E3 19               [11]  996 	add	hl, de
+      0004E4 C5               [11]  997 	push	bc
+      0004E5 EB               [ 4]  998 	ex	de, hl
+      0004E6 21 72 00         [10]  999 	ld	hl, #114
+      0004E9 39               [11] 1000 	add	hl, sp
+      0004EA EB               [ 4] 1001 	ex	de, hl
+      0004EB 01 04 00         [10] 1002 	ld	bc, #0x0004
+      0004EE ED B0            [21] 1003 	ldir
+      0004F0 C1               [10] 1004 	pop	bc
+      0004F1 DD 6E EC         [19] 1005 	ld	l, -20 (ix)
+      0004F4 DD 66 ED         [19] 1006 	ld	h, -19 (ix)
+      0004F7 5E               [ 7] 1007 	ld	e, (hl)
+      0004F8 23               [ 6] 1008 	inc	hl
+      0004F9 56               [ 7] 1009 	ld	d, (hl)
+      0004FA 23               [ 6] 1010 	inc	hl
+      0004FB 23               [ 6] 1011 	inc	hl
+      0004FC 7E               [ 7] 1012 	ld	a, (hl)
+      0004FD 2B               [ 6] 1013 	dec	hl
+      0004FE 6E               [ 7] 1014 	ld	l, (hl)
+                                   1015 ;	spillPairReg hl
+      0004FF 67               [ 4] 1016 	ld	h, a
+                                   1017 ;	spillPairReg hl
+                                   1018 ;	spillPairReg hl
+      000500 C5               [11] 1019 	push	bc
+      000501 E5               [11] 1020 	push	hl
+      000502 DD 6E F4         [19] 1021 	ld	l, -12 (ix)
+                                   1022 ;	spillPairReg hl
+                                   1023 ;	spillPairReg hl
+      000505 DD 66 F5         [19] 1024 	ld	h, -11 (ix)
+                                   1025 ;	spillPairReg hl
+                                   1026 ;	spillPairReg hl
+      000508 E3               [19] 1027 	ex	(sp), hl
+      000509 E5               [11] 1028 	push	hl
+      00050A DD 6E F2         [19] 1029 	ld	l, -14 (ix)
+                                   1030 ;	spillPairReg hl
+                                   1031 ;	spillPairReg hl
+      00050D DD 66 F3         [19] 1032 	ld	h, -13 (ix)
+                                   1033 ;	spillPairReg hl
+                                   1034 ;	spillPairReg hl
+      000510 E3               [19] 1035 	ex	(sp), hl
+      000511 CDr8Dr01         [17] 1036 	call	_apu_mulf
+      000514 C1               [10] 1037 	pop	bc
+      000515 DD 73 F2         [19] 1038 	ld	-14 (ix), e
+      000518 DD 72 F3         [19] 1039 	ld	-13 (ix), d
+      00051B DD 75 F4         [19] 1040 	ld	-12 (ix), l
+      00051E DD 74 F5         [19] 1041 	ld	-11 (ix), h
+                                   1042 ;main.c:167: decay = apu_expf(-alpha * lambda_mn * t);
+      000521 C5               [11] 1043 	push	bc
+      000522 DD 6E F8         [19] 1044 	ld	l, -8 (ix)
+                                   1045 ;	spillPairReg hl
+                                   1046 ;	spillPairReg hl
+      000525 DD 66 F9         [19] 1047 	ld	h, -7 (ix)
+                                   1048 ;	spillPairReg hl
+                                   1049 ;	spillPairReg hl
+      000528 E5               [11] 1050 	push	hl
+      000529 DD 6E F6         [19] 1051 	ld	l, -10 (ix)
+                                   1052 ;	spillPairReg hl
+                                   1053 ;	spillPairReg hl
+      00052C DD 66 F7         [19] 1054 	ld	h, -9 (ix)
+                                   1055 ;	spillPairReg hl
+                                   1056 ;	spillPairReg hl
+      00052F E5               [11] 1057 	push	hl
+      000530 DD 5E E6         [19] 1058 	ld	e, -26 (ix)
+      000533 DD 56 E7         [19] 1059 	ld	d, -25 (ix)
+      000536 DD 6E E8         [19] 1060 	ld	l, -24 (ix)
+                                   1061 ;	spillPairReg hl
+                                   1062 ;	spillPairReg hl
+      000539 DD 66 E9         [19] 1063 	ld	h, -23 (ix)
+                                   1064 ;	spillPairReg hl
+                                   1065 ;	spillPairReg hl
+      00053C CDr00r00         [17] 1066 	call	___fsmul
+      00053F E5               [11] 1067 	push	hl
+      000540 DD 6E 0A         [19] 1068 	ld	l, 10 (ix)
+                                   1069 ;	spillPairReg hl
+                                   1070 ;	spillPairReg hl
+      000543 DD 66 0B         [19] 1071 	ld	h, 11 (ix)
+                                   1072 ;	spillPairReg hl
+                                   1073 ;	spillPairReg hl
+      000546 E3               [19] 1074 	ex	(sp), hl
+      000547 E5               [11] 1075 	push	hl
+      000548 DD 6E 08         [19] 1076 	ld	l, 8 (ix)
+                                   1077 ;	spillPairReg hl
+                                   1078 ;	spillPairReg hl
+      00054B DD 66 09         [19] 1079 	ld	h, 9 (ix)
+                                   1080 ;	spillPairReg hl
+                                   1081 ;	spillPairReg hl
+      00054E E3               [19] 1082 	ex	(sp), hl
+      00054F CDr00r00         [17] 1083 	call	___fsmul
+      000552 CDr82r01         [17] 1084 	call	_apu_expf
+      000555 C1               [10] 1085 	pop	bc
+      000556 DD 73 F6         [19] 1086 	ld	-10 (ix), e
+      000559 DD 72 F7         [19] 1087 	ld	-9 (ix), d
+      00055C DD 75 F8         [19] 1088 	ld	-8 (ix), l
+      00055F DD 74 F9         [19] 1089 	ld	-7 (ix), h
+                                   1090 ;main.c:170: term = apu_mulf(apu_mulf(b_mn, spatial), decay);
+      000562 C5               [11] 1091 	push	bc
+      000563 DD 6E F4         [19] 1092 	ld	l, -12 (ix)
+                                   1093 ;	spillPairReg hl
+                                   1094 ;	spillPairReg hl
+      000566 DD 66 F5         [19] 1095 	ld	h, -11 (ix)
+                                   1096 ;	spillPairReg hl
+                                   1097 ;	spillPairReg hl
+      000569 E5               [11] 1098 	push	hl
+      00056A DD 6E F2         [19] 1099 	ld	l, -14 (ix)
+                                   1100 ;	spillPairReg hl
+                                   1101 ;	spillPairReg hl
+      00056D DD 66 F3         [19] 1102 	ld	h, -13 (ix)
+                                   1103 ;	spillPairReg hl
+                                   1104 ;	spillPairReg hl
+      000570 E5               [11] 1105 	push	hl
+      000571 DD 5E EE         [19] 1106 	ld	e, -18 (ix)
+      000574 DD 56 EF         [19] 1107 	ld	d, -17 (ix)
+      000577 DD 6E F0         [19] 1108 	ld	l, -16 (ix)
+                                   1109 ;	spillPairReg hl
+                                   1110 ;	spillPairReg hl
+      00057A DD 66 F1         [19] 1111 	ld	h, -15 (ix)
+                                   1112 ;	spillPairReg hl
+                                   1113 ;	spillPairReg hl
+      00057D CDr8Dr01         [17] 1114 	call	_apu_mulf
+      000580 E5               [11] 1115 	push	hl
+      000581 DD 6E F8         [19] 1116 	ld	l, -8 (ix)
+                                   1117 ;	spillPairReg hl
+                                   1118 ;	spillPairReg hl
+      000584 DD 66 F9         [19] 1119 	ld	h, -7 (ix)
+                                   1120 ;	spillPairReg hl
+                                   1121 ;	spillPairReg hl
+      000587 E3               [19] 1122 	ex	(sp), hl
+      000588 E5               [11] 1123 	push	hl
+      000589 DD 6E F6         [19] 1124 	ld	l, -10 (ix)
+                                   1125 ;	spillPairReg hl
+                                   1126 ;	spillPairReg hl
+      00058C DD 66 F7         [19] 1127 	ld	h, -9 (ix)
+                                   1128 ;	spillPairReg hl
+                                   1129 ;	spillPairReg hl
+      00058F E3               [19] 1130 	ex	(sp), hl
+      000590 CDr8Dr01         [17] 1131 	call	_apu_mulf
+      000593 E5               [11] 1132 	push	hl
+      000594 D5               [11] 1133 	push	de
+      000595 DD 5E DA         [19] 1134 	ld	e, -38 (ix)
+      000598 DD 56 DB         [19] 1135 	ld	d, -37 (ix)
+      00059B DD 6E DC         [19] 1136 	ld	l, -36 (ix)
+                                   1137 ;	spillPairReg hl
+                                   1138 ;	spillPairReg hl
+      00059E DD 66 DD         [19] 1139 	ld	h, -35 (ix)
+                                   1140 ;	spillPairReg hl
+                                   1141 ;	spillPairReg hl
+      0005A1 CDrCBr01         [17] 1142 	call	_apu_addf
+      0005A4 C1               [10] 1143 	pop	bc
+      0005A5 DD 73 DA         [19] 1144 	ld	-38 (ix), e
+      0005A8 DD 72 DB         [19] 1145 	ld	-37 (ix), d
+      0005AB DD 75 DC         [19] 1146 	ld	-36 (ix), l
+      0005AE DD 74 DD         [19] 1147 	ld	-35 (ix), h
+      0005B1                       1148 00105$:
+                                   1149 ;main.c:151: for (n = 1; n <= MODES; n++) {
+      0005B1 DD 34 FE         [23] 1150 	inc	-2 (ix)
+      0005B4 20 03            [12] 1151 	jr	NZ, 00168$
+      0005B6 DD 34 FF         [23] 1152 	inc	-1 (ix)
+      0005B9                       1153 00168$:
+      0005B9 3E 0A            [ 7] 1154 	ld	a, #0x0a
+      0005BB DD BE FE         [19] 1155 	cp	a, -2 (ix)
+      0005BE 3E 00            [ 7] 1156 	ld	a, #0x00
+      0005C0 DD 9E FF         [19] 1157 	sbc	a, -1 (ix)
+      0005C3 E2rC8r05         [10] 1158 	jp	PO, 00169$
+      0005C6 EE 80            [ 7] 1159 	xor	a, #0x80
+      0005C8                       1160 00169$:
+      0005C8 F2r0Cr04         [10] 1161 	jp	P, 00112$
+                                   1162 ;main.c:150: for (m = 1; m <= MODES; m++) {
+      0005CB 03               [ 6] 1163 	inc	bc
+      0005CC 3E 0A            [ 7] 1164 	ld	a, #0x0a
+      0005CE B9               [ 4] 1165 	cp	a, c
+      0005CF 3E 00            [ 7] 1166 	ld	a, #0x00
+      0005D1 98               [ 4] 1167 	sbc	a, b
+      0005D2 E2rD7r05         [10] 1168 	jp	PO, 00170$
+      0005D5 EE 80            [ 7] 1169 	xor	a, #0x80
+      0005D7                       1170 00170$:
+      0005D7 F2rE3r03         [10] 1171 	jp	P, 00122$
+                                   1172 ;main.c:174: return u;
+      0005DA DD 5E DA         [19] 1173 	ld	e, -38 (ix)
+      0005DD DD 56 DB         [19] 1174 	ld	d, -37 (ix)
+      0005E0 DD 6E DC         [19] 1175 	ld	l, -36 (ix)
+                                   1176 ;	spillPairReg hl
+                                   1177 ;	spillPairReg hl
+      0005E3 DD 66 DD         [19] 1178 	ld	h, -35 (ix)
+                                   1179 ;	spillPairReg hl
+                                   1180 ;	spillPairReg hl
+                                   1181 ;main.c:175: }
+      0005E6 DD F9            [10] 1182 	ld	sp, ix
+      0005E8 DD E1            [14] 1183 	pop	ix
+      0005EA C1               [10] 1184 	pop	bc
+      0005EB F1               [10] 1185 	pop	af
+      0005EC F1               [10] 1186 	pop	af
+      0005ED F1               [10] 1187 	pop	af
+      0005EE F1               [10] 1188 	pop	af
+      0005EF F1               [10] 1189 	pop	af
+      0005F0 F1               [10] 1190 	pop	af
+      0005F1 F1               [10] 1191 	pop	af
+      0005F2 F1               [10] 1192 	pop	af
+      0005F3 F1               [10] 1193 	pop	af
+      0005F4 F1               [10] 1194 	pop	af
+      0005F5 F1               [10] 1195 	pop	af
+      0005F6 F1               [10] 1196 	pop	af
+      0005F7 C5               [11] 1197 	push	bc
+      0005F8 C9               [10] 1198 	ret
+                                   1199 ;main.c:180: int main(void) {
+                                   1200 ;	---------------------------------
+                                   1201 ; Function main
+                                   1202 ; ---------------------------------
+      0005F9                       1203 _main::
+      0005F9 DD E5            [15] 1204 	push	ix
+      0005FB DD 21 00 00      [14] 1205 	ld	ix,#0
+      0005FF DD 39            [15] 1206 	add	ix,sp
+      000601 F5               [11] 1207 	push	af
+      000602 F5               [11] 1208 	push	af
+                                   1209 ;main.c:187: printf("Temperature distribution at t = %.1f:\n", t);
+      000603 21 A0 40         [10] 1210 	ld	hl, #0x40a0
+      000606 E5               [11] 1211 	push	hl
+      000607 21 00 00         [10] 1212 	ld	hl, #0x0000
+      00060A E5               [11] 1213 	push	hl
+      00060B 21r0Ar07         [10] 1214 	ld	hl, #___str_0
+      00060E E5               [11] 1215 	push	hl
+      00060F CDr00r00         [17] 1216 	call	_printf
+      000612 F1               [10] 1217 	pop	af
+      000613 F1               [10] 1218 	pop	af
+      000614 F1               [10] 1219 	pop	af
+                                   1220 ;main.c:188: printf("X\tY\tTemp\n");
+      000615 21r31r07         [10] 1221 	ld	hl, #___str_2
+      000618 CDr00r00         [17] 1222 	call	_puts
+                                   1223 ;main.c:190: for (x = 0.2f; x <= 0.8f; x += 0.3f) {
+      00061B 01 CD CC         [10] 1224 	ld	bc, #0xcccd
+      00061E 11 4C 3E         [10] 1225 	ld	de, #0x3e4c
+      000621                       1226 00105$:
+                                   1227 ;main.c:191: for (y = 0.2f; y <= 0.8f; y += 0.3f) {
+      000621 DD 36 FC CD      [19] 1228 	ld	-4 (ix), #0xcd
+      000625 DD 36 FD CC      [19] 1229 	ld	-3 (ix), #0xcc
+      000629 DD 36 FE 4C      [19] 1230 	ld	-2 (ix), #0x4c
+      00062D DD 36 FF 3E      [19] 1231 	ld	-1 (ix), #0x3e
+      000631                       1232 00103$:
+                                   1233 ;main.c:192: temp = solve_2d_heat(x, y, t, L, W, alpha, initial_temp);
+      000631 C5               [11] 1234 	push	bc
+      000632 D5               [11] 1235 	push	de
+      000633 21 C8 42         [10] 1236 	ld	hl, #0x42c8
+      000636 E5               [11] 1237 	push	hl
+      000637 21 00 00         [10] 1238 	ld	hl, #0x0000
+      00063A E5               [11] 1239 	push	hl
+      00063B 21 23 3C         [10] 1240 	ld	hl, #0x3c23
+      00063E E5               [11] 1241 	push	hl
+      00063F 21 0A D7         [10] 1242 	ld	hl, #0xd70a
+      000642 E5               [11] 1243 	push	hl
+      000643 21 80 3F         [10] 1244 	ld	hl, #0x3f80
+      000646 E5               [11] 1245 	push	hl
+      000647 21 00 00         [10] 1246 	ld	hl, #0x0000
+      00064A E5               [11] 1247 	push	hl
+      00064B 21 80 3F         [10] 1248 	ld	hl, #0x3f80
+      00064E E5               [11] 1249 	push	hl
+      00064F 21 00 00         [10] 1250 	ld	hl, #0x0000
+      000652 E5               [11] 1251 	push	hl
+      000653 21 A0 40         [10] 1252 	ld	hl, #0x40a0
+      000656 E5               [11] 1253 	push	hl
+      000657 21 00 00         [10] 1254 	ld	hl, #0x0000
+      00065A E5               [11] 1255 	push	hl
+      00065B DD 6E FE         [19] 1256 	ld	l, -2 (ix)
+                                   1257 ;	spillPairReg hl
+                                   1258 ;	spillPairReg hl
+      00065E DD 66 FF         [19] 1259 	ld	h, -1 (ix)
+                                   1260 ;	spillPairReg hl
+                                   1261 ;	spillPairReg hl
+      000661 E5               [11] 1262 	push	hl
+      000662 DD 6E FC         [19] 1263 	ld	l, -4 (ix)
+                                   1264 ;	spillPairReg hl
+                                   1265 ;	spillPairReg hl
+      000665 DD 66 FD         [19] 1266 	ld	h, -3 (ix)
+                                   1267 ;	spillPairReg hl
+                                   1268 ;	spillPairReg hl
+      000668 EB               [ 4] 1269 	ex	de, hl
+      000669 D5               [11] 1270 	push	de
+      00066A 59               [ 4] 1271 	ld	e, c
+      00066B 50               [ 4] 1272 	ld	d, b
+      00066C CDr57r02         [17] 1273 	call	_solve_2d_heat
+      00066F D5               [11] 1274 	push	de
+      000670 FD E1            [14] 1275 	pop	iy
+      000672 D1               [10] 1276 	pop	de
+      000673 C1               [10] 1277 	pop	bc
+                                   1278 ;main.c:193: printf("%.2f\t%.2f\t%.4f\n", x, y, temp);
+      000674 C5               [11] 1279 	push	bc
+      000675 D5               [11] 1280 	push	de
+      000676 E5               [11] 1281 	push	hl
+      000677 FD E5            [15] 1282 	push	iy
+      000679 DD 6E FE         [19] 1283 	ld	l, -2 (ix)
+                                   1284 ;	spillPairReg hl
+                                   1285 ;	spillPairReg hl
+      00067C DD 66 FF         [19] 1286 	ld	h, -1 (ix)
+                                   1287 ;	spillPairReg hl
+                                   1288 ;	spillPairReg hl
+      00067F E5               [11] 1289 	push	hl
+      000680 DD 6E FC         [19] 1290 	ld	l, -4 (ix)
+                                   1291 ;	spillPairReg hl
+                                   1292 ;	spillPairReg hl
+      000683 DD 66 FD         [19] 1293 	ld	h, -3 (ix)
+                                   1294 ;	spillPairReg hl
+                                   1295 ;	spillPairReg hl
+      000686 E5               [11] 1296 	push	hl
+      000687 D5               [11] 1297 	push	de
+      000688 C5               [11] 1298 	push	bc
+      000689 21r3Ar07         [10] 1299 	ld	hl, #___str_3
+      00068C E5               [11] 1300 	push	hl
+      00068D CDr00r00         [17] 1301 	call	_printf
+      000690 21 0E 00         [10] 1302 	ld	hl, #14
+      000693 39               [11] 1303 	add	hl, sp
+      000694 F9               [ 6] 1304 	ld	sp, hl
+      000695 21 99 3E         [10] 1305 	ld	hl, #0x3e99
+      000698 E5               [11] 1306 	push	hl
+      000699 21 9A 99         [10] 1307 	ld	hl, #0x999a
+      00069C E5               [11] 1308 	push	hl
+      00069D DD 5E FC         [19] 1309 	ld	e, -4 (ix)
+      0006A0 DD 56 FD         [19] 1310 	ld	d, -3 (ix)
+      0006A3 DD 6E FE         [19] 1311 	ld	l, -2 (ix)
+                                   1312 ;	spillPairReg hl
+                                   1313 ;	spillPairReg hl
+      0006A6 DD 66 FF         [19] 1314 	ld	h, -1 (ix)
+                                   1315 ;	spillPairReg hl
+                                   1316 ;	spillPairReg hl
+      0006A9 CDr00r00         [17] 1317 	call	___fsadd
+      0006AC D5               [11] 1318 	push	de
+      0006AD FD E1            [14] 1319 	pop	iy
+      0006AF D1               [10] 1320 	pop	de
+      0006B0 C1               [10] 1321 	pop	bc
+      0006B1 33               [ 6] 1322 	inc	sp
+      0006B2 33               [ 6] 1323 	inc	sp
+      0006B3 FD E5            [15] 1324 	push	iy
+      0006B5 DD 75 FE         [19] 1325 	ld	-2 (ix), l
+      0006B8 DD 74 FF         [19] 1326 	ld	-1 (ix), h
+      0006BB C5               [11] 1327 	push	bc
+      0006BC D5               [11] 1328 	push	de
+      0006BD DD 6E FE         [19] 1329 	ld	l, -2 (ix)
+                                   1330 ;	spillPairReg hl
+                                   1331 ;	spillPairReg hl
+      0006C0 DD 66 FF         [19] 1332 	ld	h, -1 (ix)
+                                   1333 ;	spillPairReg hl
+                                   1334 ;	spillPairReg hl
+      0006C3 E5               [11] 1335 	push	hl
+      0006C4 DD 6E FC         [19] 1336 	ld	l, -4 (ix)
+                                   1337 ;	spillPairReg hl
+                                   1338 ;	spillPairReg hl
+      0006C7 DD 66 FD         [19] 1339 	ld	h, -3 (ix)
+                                   1340 ;	spillPairReg hl
+                                   1341 ;	spillPairReg hl
+      0006CA E5               [11] 1342 	push	hl
+      0006CB 11 CD CC         [10] 1343 	ld	de, #0xcccd
+      0006CE 21 4C 3F         [10] 1344 	ld	hl, #0x3f4c
+      0006D1 CDr00r00         [17] 1345 	call	___fslt
+      0006D4 6F               [ 4] 1346 	ld	l, a
+                                   1347 ;	spillPairReg hl
+                                   1348 ;	spillPairReg hl
+      0006D5 D1               [10] 1349 	pop	de
+      0006D6 C1               [10] 1350 	pop	bc
+      0006D7 CB 45            [ 8] 1351 	bit	0, l
+      0006D9 CAr31r06         [10] 1352 	jp	Z, 00103$
+                                   1353 ;main.c:190: for (x = 0.2f; x <= 0.8f; x += 0.3f) {
+      0006DC 21 99 3E         [10] 1354 	ld	hl, #0x3e99
+      0006DF E5               [11] 1355 	push	hl
+      0006E0 21 9A 99         [10] 1356 	ld	hl, #0x999a
+      0006E3 EB               [ 4] 1357 	ex	de, hl
+      0006E4 D5               [11] 1358 	push	de
+      0006E5 59               [ 4] 1359 	ld	e, c
+      0006E6 50               [ 4] 1360 	ld	d, b
+      0006E7 CDr00r00         [17] 1361 	call	___fsadd
+      0006EA 4B               [ 4] 1362 	ld	c, e
+      0006EB 42               [ 4] 1363 	ld	b, d
+      0006EC C5               [11] 1364 	push	bc
+      0006ED EB               [ 4] 1365 	ex	de, hl
+      0006EE D5               [11] 1366 	push	de
+      0006EF D5               [11] 1367 	push	de
+      0006F0 C5               [11] 1368 	push	bc
+      0006F1 11 CD CC         [10] 1369 	ld	de, #0xcccd
+      0006F4 21 4C 3F         [10] 1370 	ld	hl, #0x3f4c
+      0006F7 CDr00r00         [17] 1371 	call	___fslt
+      0006FA 6F               [ 4] 1372 	ld	l, a
+                                   1373 ;	spillPairReg hl
+                                   1374 ;	spillPairReg hl
+      0006FB D1               [10] 1375 	pop	de
+      0006FC C1               [10] 1376 	pop	bc
+      0006FD CB 45            [ 8] 1377 	bit	0, l
+      0006FF CAr21r06         [10] 1378 	jp	Z, 00105$
+                                   1379 ;main.c:197: return 0;
+      000702 11 00 00         [10] 1380 	ld	de, #0x0000
+                                   1381 ;main.c:198: }
+      000705 DD F9            [10] 1382 	ld	sp, ix
+      000707 DD E1            [14] 1383 	pop	ix
+      000709 C9               [10] 1384 	ret
+      00070A                       1385 ___str_0:
+      00070A 54 65 6D 70 65 72 61  1386 	.ascii "Temperature distribution at t = %.1f:"
+             74 75 72 65 20 64 69
+             73 74 72 69 62 75 74
+             69 6F 6E 20 61 74 20
+             74 20 3D 20 25 2E 31
+             66 3A
+      00072F 0A                    1387 	.db 0x0a
+      000730 00                    1388 	.db 0x00
+      000731                       1389 ___str_2:
+      000731 58                    1390 	.ascii "X"
+      000732 09                    1391 	.db 0x09
+      000733 59                    1392 	.ascii "Y"
+      000734 09                    1393 	.db 0x09
+      000735 54 65 6D 70           1394 	.ascii "Temp"
+      000739 00                    1395 	.db 0x00
+      00073A                       1396 ___str_3:
+      00073A 25 2E 32 66           1397 	.ascii "%.2f"
+      00073E 09                    1398 	.db 0x09
+      00073F 25 2E 32 66           1399 	.ascii "%.2f"
+      000743 09                    1400 	.db 0x09
+      000744 25 2E 34 66           1401 	.ascii "%.4f"
+      000748 0A                    1402 	.db 0x0a
+      000749 00                    1403 	.db 0x00
+                                   1404 	.area _CODE
+                                   1405 	.area _INITIALIZER
+                                   1406 	.area _CABS (ABS)
