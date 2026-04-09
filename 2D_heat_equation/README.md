@@ -16,9 +16,9 @@ It calculates the **temperature distribution** inside a rectangular metal plate 
 - **Solution method**: Analytical solution using separation of variables → double infinite series, truncated to **MODES = 10** (10 terms in both m and n directions)
 
 For each point (x, y), it computes:
-$$
+/$math
 u(x,y,t) = \sum_{m=1}^{10} \sum_{n=1}^{10} B_{mn} \sin\left(\frac{m\pi x}{L}\right) \sin\left(\frac{n\pi y}{W}\right) e^{-\alpha \lambda_{mn} t}
-$$
+/$
 where $B_{mn}$ are the Fourier coefficients and $\lambda_{mn}$ comes from the eigenvalues.
 
 ### What the program outputs:
