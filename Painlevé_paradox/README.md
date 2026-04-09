@@ -1,3 +1,9 @@
+# The Third (Unsettling) Option. Not Determined. Not Random.
+- https://www.youtube.com/watch?v=tJsghrZQaYU
+
+
+
+# Try 
 **Got it — bench only, no space stuff, no gravity waves/black holes. Just mechanical builds, electronics, and code you can actually make + test on a table.**
 
 The “third option” from the video (multiple possible futures from the exact same starting point, with **zero randomness**) shows up **right here in plain old classical mechanics and code**. It’s called the **Painlevé paradox** (or Norton’s dome). The equations of motion simply don’t pick one unique future — they allow two or more consistent answers (or none). Same math breakdown as in the GR video, but now in stuff you can screw together or code in an afternoon.
